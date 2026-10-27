@@ -48,11 +48,11 @@ export function CheckoutPage() {
   const [formData, setFormData] = useState<ShippingAddress>({
     fullName: "Priya Sharma",
     phone: "9000000000",
-    pincode: "560001",
-    street: "Flat 402, Sunshine Residency, MG Road",
-    city: "Bengaluru",
-    state: "Karnataka",
-    landmark: "Near Brigade Towers",
+    pincode: "682001",
+    street: "Villa 12, Marine Drive",
+    city: "Kochi",
+    state: "Kerala",
+    landmark: "Near High Court Junction",
   });
 
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof ShippingAddress, string>>>({});

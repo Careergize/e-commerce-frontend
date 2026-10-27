@@ -87,10 +87,10 @@ const INITIAL_SEED_ORDERS: Order[] = [
     address: {
       fullName: "Priya Sharma",
       phone: "9000000000",
-      street: "Flat 402, Sunshine Residency, MG Road",
-      city: "Bengaluru",
-      state: "Karnataka",
-      pincode: "560001",
+      street: "Villa 12, Marine Drive",
+      city: "Kochi",
+      state: "Kerala",
+      pincode: "682001",
     },
     estimatedDelivery: "Delivered on 29 Sep 2026",
     status: "Delivered",
@@ -114,10 +114,10 @@ const INITIAL_SEED_ORDERS: Order[] = [
     address: {
       fullName: "Priya Sharma",
       phone: "9000000000",
-      street: "Flat 402, Sunshine Residency, MG Road",
-      city: "Bengaluru",
-      state: "Karnataka",
-      pincode: "560001",
+      street: "Villa 12, Marine Drive",
+      city: "Kochi",
+      state: "Kerala",
+      pincode: "682001",
     },
     estimatedDelivery: "Expected by Tomorrow, 1 Oct",
     status: "Shipped",
@@ -182,7 +182,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   // Delivery Pincode checker state
-  const [pincode, setPincode] = useState<string>("560001");
+  const [pincode, setPincode] = useState<string>("682001");
   const [deliveryEstimate, setDeliveryEstimate] = useState<string>(
     "Delivery by Friday, 3 Oct | Free Delivery"
   );

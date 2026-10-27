@@ -53,7 +53,7 @@ export function ProductDetailsPage() {
   const [selectedColor, setSelectedColor] = useState<string>("Brown");
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState<boolean>(false);
   const [isAddedAnim, setIsAddedAnim] = useState<boolean>(false);
-  const [inputPincode, setInputPincode] = useState<string>(pincode || "560001");
+  const [inputPincode, setInputPincode] = useState<string>(pincode || "682001");
   const [pincodeSuccessMsg, setPincodeSuccessMsg] = useState<string>("");
 
   useEffect(() => {

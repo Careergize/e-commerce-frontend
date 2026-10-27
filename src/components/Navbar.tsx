@@ -27,7 +27,16 @@ export function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string>(() => {
-    return localStorage.getItem("eshop_location") || "New York, USA";
+    const saved = localStorage.getItem("eshop_location");
+    if (!saved || saved === "New York, USA" || saved === "Mumbai, India") {
+      try {
+        localStorage.setItem("eshop_location", "Kerala, India");
+      } catch {
+        // ignore
+      }
+      return "Kerala, India";
+    }
+    return saved;
   });
   const [hasUnreadNotification, setHasUnreadNotification] = useState<boolean>(true);
 

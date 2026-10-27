@@ -9,13 +9,14 @@ interface LocationModalProps {
 }
 
 const POPULAR_LOCATIONS = [
-  { city: "New York", country: "USA", label: "New York, USA" },
-  { city: "Los Angeles", country: "USA", label: "Los Angeles, USA" },
-  { city: "London", country: "UK", label: "London, UK" },
+  { city: "Kerala", country: "India", label: "Kerala, India" },
+  { city: "Kochi", country: "India", label: "Kochi, Kerala" },
+  { city: "Thiruvananthapuram", country: "India", label: "Thiruvananthapuram, Kerala" },
+  { city: "Kozhikode", country: "India", label: "Kozhikode, Kerala" },
   { city: "Bengaluru", country: "India", label: "Bengaluru, India" },
   { city: "Mumbai", country: "India", label: "Mumbai, India" },
-  { city: "Paris", country: "France", label: "Paris, France" },
-  { city: "Tokyo", country: "Japan", label: "Tokyo, Japan" },
+  { city: "Delhi", country: "India", label: "Delhi, India" },
+  { city: "Chennai", country: "India", label: "Chennai, India" },
 ];
 
 export function LocationModal({
@@ -65,7 +66,7 @@ export function LocationModal({
             <input
               id="custom-loc"
               type="text"
-              placeholder="e.g. Chicago, USA"
+              placeholder="e.g. Kochi, Kerala or Calicut"
               value={customInput}
               onChange={(e) => setCustomInput(e.target.value)}
               className="flex-1 rounded-xl border border-[#E0D7CE] bg-[#FAF8F5] px-3.5 py-2 text-xs text-[#1F1916] placeholder:text-stone-400 focus:border-[#704F38] focus:bg-white focus:outline-hidden"
