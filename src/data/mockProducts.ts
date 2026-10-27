@@ -2792,8 +2792,8 @@ export const mockProducts: Product[] = [
     "rating": 4.7,
     "reviewsCount": 162,
     "images": [
-      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80"
+      "/products/stoneware-dinner-plates-1.jpg",
+      "/products/stoneware-dinner-plates-detail.jpg"
     ],
     "details": {
       "Material": "Kiln-fired durable stoneware with raw clay edge",
