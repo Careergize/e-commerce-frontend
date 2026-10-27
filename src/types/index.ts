@@ -88,5 +88,5 @@ export interface Order {
   totalAmount: number;
   estimatedDelivery: string;
   createdAt: string;
-  status: "Order Confirmed" | "Packed" | "Shipped" | "Delivered";
+  status: "Order Confirmed" | "Packed" | "Shipped" | "Delivered" | "Cancelled";
 }

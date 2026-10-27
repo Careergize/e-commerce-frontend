@@ -8,7 +8,6 @@ import {
   Home,
   ShoppingBag,
   FileText,
-  Sparkles,
   MapPin,
   Clock,
   Copy,
@@ -70,7 +69,7 @@ export function OrderSuccessPage() {
     paymentMethod: "cod" as const,
     address: {
       fullName: "Priya Sharma",
-      phone: "9876543210",
+      phone: "9000000000",
       street: "Flat 402, Sunshine Residency, MG Road",
       city: "Bengaluru",
       state: "Karnataka",
@@ -140,7 +139,6 @@ export function OrderSuccessPage() {
 
           {/* Order ID Pill with Copy button */}
           <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-1.5 text-xs font-bold text-slate-800 shadow-2xs">
-            <Sparkles size={13} className="text-emerald-500" />
             <span>Order Reference: {order.orderId}</span>
             <button
               onClick={copyOrderId}

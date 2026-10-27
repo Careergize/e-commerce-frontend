@@ -11,6 +11,8 @@ import { CheckoutPage } from "./pages/CheckoutPage";
 import { OrderSuccessPage } from "./pages/OrderSuccessPage";
 import { OrdersPage } from "./pages/OrdersPage";
 import { WishlistPage } from "./pages/WishlistPage";
+import { ProfilePage } from "./pages/ProfilePage";
+import { MobileBottomNav } from "./components/MobileBottomNav";
 
 // Helper component to scroll page to top on route change
 function ScrollToTop() {
@@ -26,11 +28,12 @@ function ScrollToTop() {
 // Layout wrapper for all pages
 function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-[#fafafa] font-sans antialiased text-slate-800">
+    <div className="flex min-h-screen flex-col bg-[#FAF8F5] font-sans antialiased text-[#1F1916]">
       <Navbar />
       <CategoryBar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-16 md:pb-0">{children}</main>
       <Footer />
+      <MobileBottomNav />
     </div>
   );
 }
@@ -49,6 +52,7 @@ export function App() {
             <Route path="/order-success" element={<OrderSuccessPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             {/* Fallback route */}
             <Route path="*" element={<HomePage />} />
           </Routes>

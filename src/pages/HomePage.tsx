@@ -13,24 +13,17 @@ import {
 } from "../data/mockProducts";
 import { ProductCard } from "../components/ProductCard";
 import { PromoSlider } from "../components/PromoSlider";
+import { CategoryCircleNav } from "../components/CategoryCircleNav";
 import { useCart } from "../context/useCart";
 import type { SortOption, Product } from "../types";
 import {
   SlidersHorizontal,
   X,
   Truck,
-  ArrowUpDown,
   Search,
-  ShieldCheck,
-  RotateCcw,
   Banknote,
   Flame,
 } from "lucide-react";
-
-interface CategoryHighlight {
-  name: string;
-  image: string;
-}
 
 export function HomePage() {
   const { searchQuery, setSearchQuery, selectedCategory, setSelectedCategory } =
@@ -44,6 +37,35 @@ export function HomePage() {
   const [fastDeliveryOnly, setFastDeliveryOnly] = useState<boolean>(false);
   const [codOnly, setCodOnly] = useState<boolean>(false);
   const [minDiscount50, setMinDiscount50] = useState<boolean>(false);
+  const [activeFlashTab, setActiveFlashTab] = useState<string>("All");
+
+  // Countdown timer for Flash Sale
+  const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number }>({
+    hours: 2,
+    minutes: 12,
+    seconds: 40,
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        return { hours: 2, minutes: 15, seconds: 0 };
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatUnit = (num: number) => String(num).padStart(2, "0");
+
+  // Listen for filter drawer event from navbar button
+  useEffect(() => {
+    const handleOpen = () => setIsFilterDrawerOpen(true);
+    window.addEventListener("open-filter-drawer", handleOpen);
+    return () => window.removeEventListener("open-filter-drawer", handleOpen);
+  }, []);
 
   // Lock background scroll when drawer is open
   useEffect(() => {
@@ -62,48 +84,37 @@ export function HomePage() {
     };
   }, [isFilterDrawerOpen]);
 
-  // Modern Category Highlights
-  const categoryHighlights: CategoryHighlight[] = [
-    {
-      name: "Women's Wear",
-      image:
-        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Men's Wear",
-      image:
-        "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Footwear",
-      image:
-        "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Accessories",
-      image:
-        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Home & Living",
-      image:
-        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Beauty & Wellness",
-      image:
-        "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Tech & Audio",
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80",
-    },
-  ];
-
   // Filter & Sort Logic
   const filteredProducts = useMemo<Product[]>(() => {
     let list = [...mockProducts];
+
+    // Flash Sale Tab Filter from screenshot
+    if (activeFlashTab === "Newest") {
+      list.sort((a, b) => b.id - a.id);
+    } else if (activeFlashTab === "Popular") {
+      list.sort((a, b) => b.reviewsCount - a.reviewsCount);
+    } else if (activeFlashTab === "Man") {
+      list = list.filter(
+        (p) =>
+          p.category === "Men's Wear" ||
+          p.category === "T-Shirt" ||
+          p.category === "Pant" ||
+          p.subcategory?.toLowerCase().includes("man") ||
+          p.title.toLowerCase().includes("men") ||
+          p.title.toLowerCase().includes("blazer")
+      );
+    } else if (activeFlashTab === "Women") {
+      list = list.filter(
+        (p) =>
+          p.category === "Women's Wear" ||
+          p.category === "Dress" ||
+          p.category === "Jacket" ||
+          p.subcategory?.toLowerCase().includes("female") ||
+          p.title.toLowerCase().includes("women") ||
+          p.title.toLowerCase().includes("anarkali") ||
+          p.title.toLowerCase().includes("saree")
+      );
+    }
 
     // Category Filter
     if (selectedCategory && selectedCategory !== "All") {
@@ -194,6 +205,7 @@ export function HomePage() {
     fastDeliveryOnly,
     codOnly,
     minDiscount50,
+    activeFlashTab,
   ]);
 
   const handleResetFilters = () => {
@@ -235,249 +247,219 @@ export function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#fafafa] pb-20">
-      {/* Compact Sliding Ads Showcase */}
-      <PromoSlider />
+    <div className="min-h-screen bg-[#FAF8F5] pb-24">
+      {/* Top Hero Section: Banner + Spotlight Deals on Desktop */}
+      <section className="mx-auto max-w-7xl px-4 pt-3 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* Main Hero Slider (8 cols on desktop, full width on mobile) */}
+          <div className="lg:col-span-8">
+            <PromoSlider />
+          </div>
 
-      {/* Visual Category Discovery Bubbles */}
-      <section className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
-            Featured Collections
-          </h2>
-          <span className="text-xs text-slate-400">Select to explore</span>
+          {/* Flash Deals Spotlight (4 cols on desktop - fills blank space with real products!) */}
+          <div className="hidden lg:flex lg:col-span-4 flex-col justify-between rounded-3xl border border-[#EAE4DC] bg-white p-3.5 shadow-2xs">
+            <div className="flex items-center justify-between pb-1.5 border-b border-[#EAE4DC]">
+              <span className="text-xs font-black text-[#1F1916] uppercase tracking-wider flex items-center gap-1.5">
+                <Flame size={14} className="text-[#704F38]" /> Flash Deals Spotlight
+              </span>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                50% OFF
+              </span>
+            </div>
+
+            {/* 2 Hot Deals Cards displayed right alongside the banner */}
+            <div className="grid grid-cols-2 gap-2.5 pt-2 flex-1">
+              {mockProducts.slice(0, 2).map((dealProduct) => (
+                <ProductCard key={`spotlight-${dealProduct.id}`} product={dealProduct} />
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="no-scrollbar flex items-center gap-3 overflow-x-auto pb-2">
-          {categoryHighlights.map((cat) => {
-            const isSelected = selectedCategory === cat.name;
-            return (
+      </section>
+
+      {/* Category Circles (swipeable on mobile, hidden on desktop where CategoryBar exists) */}
+      <CategoryCircleNav />
+
+      {/* Main Catalog / Flash Sale Section */}
+      <section id="catalog-section" className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+        {/* Unified Modern Toolbar: Flash Tabs, Countdown Timer, Filter Drawer Button & Sort */}
+        <div className="mb-4 rounded-2xl border border-[#EAE4DC] bg-white p-3.5 sm:p-4 shadow-2xs">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            {/* Left: Title + Flash Sale Filter Tabs */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <h2 className="text-base sm:text-lg font-black text-[#1F1916]">
+                {selectedCategory === "All" ? "Flash Sale" : selectedCategory}
+              </h2>
+              <span className="rounded-full bg-[#F5ECE5] px-2.5 py-0.5 text-[11px] font-bold text-[#704F38]">
+                {filteredProducts.length} items
+              </span>
+
+              {/* Flash Sale Tabs */}
+              <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar">
+                {["All", "Newest", "Popular", "Man", "Women"].map((tab) => {
+                  const isActive = activeFlashTab === tab;
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveFlashTab(tab)}
+                      className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-all shrink-0 ${
+                        isActive
+                          ? "bg-[#704F38] text-white shadow-xs font-bold"
+                          : "border border-[#EAE4DC] bg-[#FAF8F5] text-[#5C4C40] hover:border-[#704F38] hover:text-[#704F38]"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right: Closing in Countdown + Filter Drawer Button + Sort Select */}
+            <div className="flex items-center justify-between sm:justify-end gap-2.5">
+              {/* Closing in timer */}
+              <div className="flex items-center gap-1.5 text-xs text-[#8D7B68]">
+                <span className="text-[11px] font-medium hidden sm:inline">Closing in:</span>
+                <div className="flex items-center gap-1 font-mono text-[11px] font-bold text-[#704F38]">
+                  <span className="rounded-md bg-[#F5ECE5] px-1.5 py-0.5">
+                    {formatUnit(timeLeft.hours)}
+                  </span>
+                  <span>:</span>
+                  <span className="rounded-md bg-[#F5ECE5] px-1.5 py-0.5">
+                    {formatUnit(timeLeft.minutes)}
+                  </span>
+                  <span>:</span>
+                  <span className="rounded-md bg-[#F5ECE5] px-1.5 py-0.5">
+                    {formatUnit(timeLeft.seconds)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Filter Drawer Button */}
               <button
-                key={cat.name}
-                onClick={() => {
-                  setSelectedCategory(cat.name);
-                  setSearchQuery("");
-                  const el = document.getElementById("catalog-section");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className={`group flex shrink-0 items-center gap-3 rounded-2xl border p-2 pr-4 transition-all duration-200 ${
-                  isSelected
-                    ? "border-slate-900 bg-slate-900 text-white shadow-sm"
-                    : "border-slate-200/90 bg-white hover:border-slate-300 hover:shadow-xs text-slate-800"
+                type="button"
+                onClick={() => setIsFilterDrawerOpen(true)}
+                className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all shadow-2xs ${
+                  activeFiltersCount > 0
+                    ? "border-[#704F38] bg-[#704F38] text-white"
+                    : "border-[#EAE4DC] bg-white text-[#1F1916] hover:border-[#704F38]"
                 }`}
               >
-                <div className="h-11 w-11 overflow-hidden rounded-xl bg-slate-100 shrink-0">
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="h-full w-full object-cover object-center group-hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-                <div className="text-left">
-                  <span
-                    className={`block text-xs font-bold leading-tight ${
-                      isSelected ? "text-white" : "text-slate-800"
-                    }`}
-                  >
-                    {cat.name}
+                <SlidersHorizontal size={13} className={activeFiltersCount > 0 ? "text-white" : "text-[#704F38]"} />
+                <span>Filters</span>
+                {activeFiltersCount > 0 && (
+                  <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-white text-[#704F38] px-1 text-[9px] font-black">
+                    {activeFiltersCount}
                   </span>
-                  <span
-                    className={`text-[10px] ${
-                      isSelected ? "text-slate-300" : "text-slate-400"
-                    }`}
-                  >
-                    Discover &rarr;
-                  </span>
-                </div>
+                )}
               </button>
-            );
-          })}
-        </div>
-      </section>
 
-      {/* e-Shop Assured Value Proposition Strip (Meesho Trust Guarantee, Modern Aesthetic) */}
-      <section className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 rounded-3xl border border-slate-200/80 bg-white p-3.5 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-3 p-1">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-900">
-              <ShieldCheck size={20} />
+              {/* Sort Select */}
+              <div className="flex items-center gap-1.5">
+                <select
+                  value={sortBy}
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setSortBy(e.target.value as SortOption)
+                  }
+                  className="rounded-full border border-[#EAE4DC] bg-white px-3 py-1.5 text-xs font-semibold text-[#1F1916] shadow-2xs focus:border-[#704F38] focus:outline-hidden"
+                >
+                  <option value="relevance">Curated Relevance</option>
+                  <option value="price-low-high">Price: Low to High</option>
+                  <option value="price-high-low">Price: High to Low</option>
+                  <option value="rating-high">Highest Rated</option>
+                  <option value="discount-high">Highest Discount</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 leading-tight">Manufacturer Prices</p>
-              <p className="text-[10px] text-slate-500">Zero middleman markup</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-1">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
-              <Truck size={20} />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 leading-tight">100% Free Delivery</p>
-              <p className="text-[10px] text-slate-500">On every single order</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-1">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
-              <Banknote size={20} />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 leading-tight">Cash on Delivery</p>
-              <p className="text-[10px] text-slate-500">Pay when you receive</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-1">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-900">
-              <RotateCcw size={20} />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 leading-tight">7-Day Easy Returns</p>
-              <p className="text-[10px] text-slate-500">Doorstep pickup & refund</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Catalog Section */}
-      <section id="catalog-section" className="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
-        {/* Modern Filter & Sort Header Bar */}
-        <div className="mb-3 flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base sm:text-lg font-bold text-slate-900">
-              {selectedCategory === "All" ? "All Products" : selectedCategory}
-            </h2>
-            <span className="rounded-full bg-slate-100 px-3 py-0.5 text-xs font-semibold text-slate-600">
-              {filteredProducts.length} items
-            </span>
           </div>
 
-          <div className="flex items-center justify-between gap-3 sm:justify-end">
-            {/* On-Demand Filter Drawer Button */}
+          {/* Quick Discovery Chips Bar */}
+          <div className="no-scrollbar mt-3 pt-2.5 border-t border-[#EAE4DC]/70 flex items-center gap-1.5 overflow-x-auto pb-0.5">
             <button
-              onClick={() => setIsFilterDrawerOpen(true)}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition-all shadow-2xs ${
-                activeFiltersCount > 0
-                  ? "border-slate-900 bg-slate-900 text-white hover:bg-slate-800"
-                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+              onClick={handleResetFilters}
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                !hasActiveFilters
+                  ? "bg-[#704F38] text-white shadow-xs font-bold"
+                  : "border border-[#EAE4DC] bg-[#FAF8F5] text-[#5C4C40] hover:bg-white"
               }`}
             >
-              <SlidersHorizontal
-                size={14}
-                className={activeFiltersCount > 0 ? "text-emerald-400" : "text-slate-500"}
-              />
-              <span>Filters</span>
-              {activeFiltersCount > 0 && (
-                <span className="flex h-4.5 min-w-[18px] items-center justify-center rounded-full bg-emerald-400 px-1 text-[10px] font-black text-slate-950">
-                  {activeFiltersCount}
-                </span>
-              )}
+              All Items
             </button>
 
-            {/* Modern Sort Select */}
-            <div className="flex items-center gap-2">
-              <span className="hidden text-xs text-slate-400 sm:inline flex items-center gap-1 font-medium">
-                <ArrowUpDown size={12} /> Sort:
-              </span>
-              <select
-                value={sortBy}
-                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  setSortBy(e.target.value as SortOption)
-                }
-                className="rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 shadow-2xs focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
-              >
-                <option value="relevance">Curated Relevance</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
-                <option value="rating-high">Highest Rated</option>
-                <option value="discount-high">Highest Discount</option>
-              </select>
-            </div>
+            <button
+              onClick={() => setCodOnly((prev) => !prev)}
+              className={`shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                codOnly
+                  ? "bg-emerald-700 text-white shadow-xs"
+                  : "border border-[#EAE4DC] bg-white text-[#5C4C40] hover:bg-[#FAF8F5]"
+              }`}
+            >
+              <Banknote size={12} className={codOnly ? "text-white" : "text-emerald-600"} />
+              <span>Cash on Delivery</span>
+            </button>
+
+            <button
+              onClick={() => setFastDeliveryOnly((prev) => !prev)}
+              className={`shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                fastDeliveryOnly
+                  ? "bg-[#704F38] text-white shadow-xs"
+                  : "border border-[#EAE4DC] bg-white text-[#5C4C40] hover:bg-[#FAF8F5]"
+              }`}
+            >
+              <Truck size={12} className={fastDeliveryOnly ? "text-white" : "text-[#704F38]"} />
+              <span>⚡ Express Dispatch</span>
+            </button>
+
+            <button
+              onClick={() => setMinRating((prev) => (prev === 4.0 ? 0 : 4.0))}
+              className={`shrink-0 flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                minRating === 4.0
+                  ? "bg-[#704F38] text-white shadow-xs"
+                  : "border border-[#EAE4DC] bg-white text-[#5C4C40] hover:bg-[#FAF8F5]"
+              }`}
+            >
+              <span>★ 4.0+ Rating</span>
+            </button>
+
+            <button
+              onClick={() =>
+                setSelectedPriceRange((prev) => (prev === "under-1000" ? "all" : "under-1000"))
+              }
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                selectedPriceRange === "under-1000"
+                  ? "bg-[#704F38] text-white shadow-xs"
+                  : "border border-[#EAE4DC] bg-white text-[#5C4C40] hover:bg-[#FAF8F5]"
+              }`}
+            >
+              Under ₹1,000
+            </button>
+
+            <button
+              onClick={() =>
+                setSelectedPriceRange((prev) => (prev === "1000-2000" ? "all" : "1000-2000"))
+              }
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                selectedPriceRange === "1000-2000"
+                  ? "bg-[#704F38] text-white shadow-xs"
+                  : "border border-[#EAE4DC] bg-white text-[#5C4C40] hover:bg-[#FAF8F5]"
+              }`}
+            >
+              ₹1,000 - ₹2,000
+            </button>
+
+            <button
+              onClick={() => setMinDiscount50((prev) => !prev)}
+              className={`shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                minDiscount50
+                  ? "bg-rose-600 text-white shadow-xs"
+                  : "border border-[#EAE4DC] bg-white text-[#5C4C40] hover:bg-[#FAF8F5]"
+              }`}
+            >
+              <Flame size={12} className={minDiscount50 ? "text-white" : "text-rose-500"} />
+              <span>50%+ Off</span>
+            </button>
           </div>
-        </div>
-
-        {/* Meesho-Style Fast Discovery Filter Pills Bar */}
-        <div className="no-scrollbar mb-4 flex items-center gap-2 overflow-x-auto pb-1">
-          <button
-            onClick={handleResetFilters}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              !hasActiveFilters
-                ? "bg-slate-900 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            All Items
-          </button>
-
-          <button
-            onClick={() => setCodOnly((prev) => !prev)}
-            className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              codOnly
-                ? "bg-emerald-700 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            <Banknote size={13} className={codOnly ? "text-white" : "text-emerald-600"} />
-            <span>Cash on Delivery</span>
-          </button>
-
-          <button
-            onClick={() => setFastDeliveryOnly((prev) => !prev)}
-            className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              fastDeliveryOnly
-                ? "bg-slate-900 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            <Truck size={13} className={fastDeliveryOnly ? "text-emerald-400" : "text-slate-500"} />
-            <span>⚡ Express Dispatch</span>
-          </button>
-
-          <button
-            onClick={() => setMinRating((prev) => (prev === 4.0 ? 0 : 4.0))}
-            className={`shrink-0 flex items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              minRating === 4.0
-                ? "bg-slate-900 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            <span>★ 4.0+ Rating</span>
-          </button>
-
-          <button
-            onClick={() =>
-              setSelectedPriceRange((prev) => (prev === "under-500" ? "all" : "under-500"))
-            }
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              selectedPriceRange === "under-500"
-                ? "bg-slate-900 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            Under ₹500
-          </button>
-
-          <button
-            onClick={() =>
-              setSelectedPriceRange((prev) => (prev === "500-1000" ? "all" : "500-1000"))
-            }
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              selectedPriceRange === "500-1000"
-                ? "bg-slate-900 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            ₹500 - ₹1,000
-          </button>
-
-          <button
-            onClick={() => setMinDiscount50((prev) => !prev)}
-            className={`shrink-0 flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-              minDiscount50
-                ? "bg-rose-600 text-white shadow-2xs"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            <Flame size={13} className={minDiscount50 ? "text-white" : "text-rose-500"} />
-            <span>50%+ Off</span>
-          </button>
         </div>
 
         {/* Active Filter Chips Bar */}
@@ -600,7 +582,7 @@ export function HomePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3.5 sm:gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

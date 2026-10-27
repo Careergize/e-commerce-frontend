@@ -47,7 +47,7 @@ export function CheckoutPage() {
   // Address Form State
   const [formData, setFormData] = useState<ShippingAddress>({
     fullName: "Priya Sharma",
-    phone: "9876543210",
+    phone: "9000000000",
     pincode: "560001",
     street: "Flat 402, Sunshine Residency, MG Road",
     city: "Bengaluru",

@@ -46,11 +46,15 @@ export function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setIsAddedAnim(false), 1200);
   };
 
+  // Format currency in Indian Rupee
+  const displayPrice = `₹${Math.round(product.price).toLocaleString("en-IN")}`;
+  const displayOriginalPrice = `₹${Math.round(product.originalPrice).toLocaleString("en-IN")}`;
+
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-0.5">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#EAE4DC] bg-white transition-all duration-300 hover:shadow-xl hover:shadow-[#704F38]/5 hover:-translate-y-0.5">
       <Link to={`/product/${product.id}`} className="block flex-1">
         {/* Product Image Container */}
-        <div className="relative aspect-4/5 w-full overflow-hidden bg-slate-100">
+        <div className="relative aspect-4/5 w-full overflow-hidden bg-[#F5ECE5]/40">
           <img
             src={product.images && product.images[0]}
             alt={product.title}
@@ -58,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
             className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
           />
 
-          {/* Floating Minimal Wishlist Button */}
+          {/* Floating Minimal Wishlist Button from screenshot */}
           <button
             type="button"
             onClick={(e: MouseEvent<HTMLButtonElement>) => {
@@ -66,26 +70,30 @@ export function ProductCard({ product }: ProductCardProps) {
               e.stopPropagation();
               toggleWishlist(product);
             }}
-            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-sm transition hover:bg-white hover:scale-110 active:scale-95"
+            className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-xs transition hover:bg-white hover:scale-110 active:scale-95"
             aria-label="Add to wishlist"
           >
             <Heart
               size={15}
               className={
                 isFavorite
-                  ? "fill-rose-500 text-rose-500"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "fill-[#704F38] text-[#704F38]"
+                  : "text-[#8D7B68] hover:text-[#1F1916]"
               }
             />
           </button>
 
-          {/* Category Tag & Discount Badge */}
+          {/* Category Tag & Rating Badge */}
           <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5">
-            <span className="rounded-full bg-slate-900/80 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-semibold text-white">
-              {product.category}
-            </span>
+            <div className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2 py-0.5 text-[10px] font-bold text-[#1F1916] shadow-xs backdrop-blur-xs">
+              <Star size={10} className="fill-amber-400 text-amber-400" />
+              <span>{product.rating}</span>
+              <span className="text-stone-400 font-normal text-[9px]">
+                ({product.reviewsCount})
+              </span>
+            </div>
             {product.badge && (
-              <span className="rounded-full bg-slate-100/90 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-slate-800 shadow-2xs">
+              <span className="rounded-full bg-[#704F38]/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-xs backdrop-blur-xs">
                 {product.badge}
               </span>
             )}
@@ -93,83 +101,95 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Card Body */}
-        <div className="p-3.5">
-          {/* Rating and Delivery Row */}
-          <div className="flex items-center gap-1.5 text-xs">
-            <div className="inline-flex items-center gap-0.5 rounded-md bg-emerald-700 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-2xs">
-              <span>{product.rating}</span>
-              <Star size={9} className="fill-white text-white" />
-            </div>
-            <span className="text-[11px] text-slate-400">
-              ({product.reviewsCount.toLocaleString()})
+        <div className="p-3 sm:p-4">
+          {/* Category & Subcategory */}
+          <div className="flex items-center justify-between text-[11px] font-semibold text-[#8D7B68]">
+            <span className="uppercase tracking-wider">
+              {product.category}
             </span>
-            <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-semibold text-emerald-600">
-              Free Delivery
-            </span>
+            {product.subcategory && (
+              <span className="text-[10px] text-[#A89887] font-medium truncate max-w-[110px]">
+                {product.subcategory}
+              </span>
+            )}
           </div>
 
           {/* Title */}
           <h3
             title={product.title}
-            className="mt-1.5 line-clamp-2 text-xs sm:text-sm font-medium text-slate-800 leading-snug group-hover:text-slate-950 transition-colors"
+            className="mt-1 line-clamp-1 text-xs sm:text-sm font-bold text-[#1F1916] leading-snug group-hover:text-[#704F38] transition-colors"
           >
             {product.title}
           </h3>
 
-          {/* Pricing Row */}
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-              ₹{product.price.toLocaleString("en-IN")}
+          {/* Primary Specification Chip (Material / Fabric / Leather) */}
+          {(product.details?.Material ||
+            product.details?.Fabric ||
+            product.details?.Upper ||
+            product.details?.Leather ||
+            product.details?.Formula ||
+            product.details?.KeyIngredients) && (
+            <div className="mt-1.5 flex items-center gap-1 text-[10px] text-[#704F38] bg-[#F5ECE5]/60 px-2 py-0.5 rounded-md w-fit max-w-full truncate font-medium">
+              <span className="truncate">
+                {product.details?.Material ||
+                  product.details?.Fabric ||
+                  product.details?.Upper ||
+                  product.details?.Leather ||
+                  product.details?.Formula ||
+                  product.details?.KeyIngredients}
+              </span>
+            </div>
+          )}
+
+          {/* Pricing Row with Discount Tag */}
+          <div className="mt-2 flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-sm sm:text-base font-black text-[#1F1916] tracking-tight">
+              {displayPrice}
             </span>
             {product.originalPrice > product.price && (
               <>
-                <span className="text-xs text-slate-400 line-through">
-                  ₹{product.originalPrice.toLocaleString("en-IN")}
+                <span className="text-[11px] text-stone-400 line-through">
+                  {displayOriginalPrice}
                 </span>
-                <span className="text-xs font-bold text-emerald-600">
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
                   {product.discountPercent}% OFF
                 </span>
               </>
             )}
           </div>
 
-          {/* Meesho-like Trust Indicator Tags */}
-          <div className="mt-2.5 flex items-center gap-2 border-t border-slate-100 pt-2 text-[10px] text-slate-500">
-            <span className="inline-flex items-center gap-1 font-medium text-slate-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> COD Available
+          {/* Delivery & Trust Line */}
+          <div className="mt-1.5 flex items-center gap-2 text-[10px] text-stone-500 font-medium">
+            <span className="text-emerald-700 font-semibold flex items-center gap-0.5">
+              ✓ Free Delivery
             </span>
-            {product.fastDelivery && (
-              <>
-                <span className="text-slate-300">•</span>
-                <span className="font-medium text-slate-600">⚡ Express Dispatch</span>
-              </>
-            )}
+            <span>•</span>
+            <span>COD Available</span>
           </div>
         </div>
       </Link>
 
-      {/* Quick Add Section */}
-      <div className="p-3.5 pt-0">
+      {/* Quick Add Button */}
+      <div className="p-3 sm:p-4 pt-0">
         {/* Interactive Size Selector Popup */}
         {showSizePicker && (
           <div
-            className="mb-2.5 rounded-xl border border-slate-200 bg-slate-50/90 p-2.5 text-xs animate-in fade-in zoom-in-95 duration-150"
+            className="mb-2 rounded-xl border border-[#EAE4DC] bg-[#FAF8F5] p-2 text-xs animate-in fade-in zoom-in-95 duration-150"
             onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
           >
-            <p className="mb-1.5 text-[11px] font-bold text-slate-900">
+            <p className="mb-1 text-[10px] font-bold text-[#1F1916]">
               Select Size:
             </p>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1">
               {product.sizes.map((sz) => (
                 <button
                   key={sz}
                   type="button"
                   onClick={(e) => handleSizeSelectAndAdd(e, sz)}
-                  className={`rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition ${
+                  className={`rounded-lg border px-2 py-0.5 text-[10px] font-bold transition ${
                     selectedSize === sz
-                      ? "border-slate-900 bg-slate-900 text-white shadow-2xs"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-400"
+                      ? "border-[#704F38] bg-[#704F38] text-white"
+                      : "border-[#E0D7CE] bg-white text-[#5C4C40] hover:border-[#704F38]"
                   }`}
                 >
                   {sz}
@@ -182,19 +202,19 @@ export function ProductCard({ product }: ProductCardProps) {
         <button
           type="button"
           onClick={handleQuickAdd}
-          className={`flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold tracking-wide transition-all duration-200 ${
+          className={`flex w-full items-center justify-center gap-1.5 rounded-full py-1.5 sm:py-2 text-xs font-bold tracking-wide transition-all duration-200 ${
             isAddedAnim
-              ? "bg-emerald-600 text-white shadow-sm"
-              : "border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-900 hover:text-white hover:border-slate-900 active:scale-[0.98]"
+              ? "bg-[#704F38] text-white shadow-xs"
+              : "border border-[#E0D7CE] bg-[#FAF8F5] text-[#1F1916] hover:bg-[#704F38] hover:text-white hover:border-[#704F38] active:scale-[0.98]"
           }`}
         >
           {isAddedAnim ? (
             <>
-              <Check size={14} /> Added to Cart
+              <Check size={13} /> Added
             </>
           ) : (
             <>
-              <ShoppingBag size={14} /> Quick Add
+              <ShoppingBag size={13} /> Add to Cart
             </>
           )}
         </button>
@@ -202,3 +222,5 @@ export function ProductCard({ product }: ProductCardProps) {
     </div>
   );
 }
+
+export default ProductCard;

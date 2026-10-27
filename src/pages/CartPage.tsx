@@ -9,7 +9,6 @@ import {
   ShoppingBag,
   ShieldCheck,
   Truck,
-  Sparkles,
   ChevronLeft,
   Briefcase,
 } from "lucide-react";
@@ -52,8 +51,8 @@ export function CartPage() {
               to="/"
               className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-7 py-3 text-xs sm:text-sm font-bold text-white shadow-md transition hover:bg-slate-800 active:scale-95"
             >
-              <Sparkles size={16} />
               <span>Explore Collection</span>
+              <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -216,8 +215,7 @@ export function CartPage() {
               {/* Savings Announcement Banner */}
               {cartDiscount > 0 && (
                 <div className="rounded-3xl bg-emerald-50/70 border border-emerald-200/80 p-4 text-emerald-950 shadow-2xs">
-                  <div className="flex items-center gap-2.5 font-bold text-xs sm:text-sm text-emerald-900">
-                    <Sparkles size={17} className="text-emerald-600" />
+                  <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-emerald-900">
                     <span>You're saving ₹{cartDiscount.toLocaleString("en-IN")} on this order!</span>
                   </div>
                 </div>

@@ -4,7 +4,7 @@ import {
   ShieldCheck,
   Truck,
   RotateCcw,
-  Sparkles,
+  BadgeCheck,
 } from "lucide-react";
 import { useCart } from "../context/useCart";
 
@@ -17,54 +17,54 @@ export function Footer() {
   };
 
   return (
-    <footer className="border-t border-slate-200 bg-white text-slate-700">
+    <footer className="hidden md:block border-t border-[#EAE4DC] bg-[#FAF8F5] text-[#5C4C40]">
       {/* Top Banner section */}
-      <div className="border-b border-slate-100 bg-[#f8fafc] py-8 px-4 sm:px-6">
+      <div className="border-b border-[#EAE4DC] bg-white/60 py-8 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex items-start gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs">
-                <Truck size={20} className="text-emerald-400" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F5ECE5] text-[#704F38] shadow-2xs">
+                <Truck size={20} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Free Express Delivery</h4>
-                <p className="mt-1 text-xs text-slate-500">
-                  Zero shipping charges across 28,000+ Indian postal codes.
+                <h4 className="text-sm font-bold text-[#1F1916]">Free Express Delivery</h4>
+                <p className="mt-1 text-xs text-[#8D7B68]">
+                  Zero shipping charges across all delivery zones.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs">
-                <Sparkles size={20} className="text-amber-400" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F5ECE5] text-[#704F38] shadow-2xs">
+                <BadgeCheck size={20} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Curated Quality</h4>
-                <p className="mt-1 text-xs text-slate-500">
+                <h4 className="text-sm font-bold text-[#1F1916]">Curated Quality</h4>
+                <p className="mt-1 text-xs text-[#8D7B68]">
                   Direct sourcing and authentic manufacturer warranties.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs">
-                <RotateCcw size={20} className="text-cyan-400" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F5ECE5] text-[#704F38] shadow-2xs">
+                <RotateCcw size={20} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">7-Day Easy Returns</h4>
-                <p className="mt-1 text-xs text-slate-500">
+                <h4 className="text-sm font-bold text-[#1F1916]">7-Day Easy Returns</h4>
+                <p className="mt-1 text-xs text-[#8D7B68]">
                   Instant refunds and doorstep pickup without hassle.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs">
-                <ShieldCheck size={20} className="text-emerald-400" />
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#F5ECE5] text-[#704F38] shadow-2xs">
+                <ShieldCheck size={20} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Secure Payments</h4>
-                <p className="mt-1 text-xs text-slate-500">
+                <h4 className="text-sm font-bold text-[#1F1916]">Secure Payments</h4>
+                <p className="mt-1 text-xs text-[#8D7B68]">
                   Cash on Delivery & encrypted 256-bit online checkouts.
                 </p>
               </div>
@@ -79,8 +79,8 @@ export function Footer() {
           {/* Col 1: Brand & App Download */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-1.5">
-              <span className="text-2xl font-extrabold tracking-tight font-sans text-slate-900">
-                e<span className="text-emerald-500">.</span>shop
+              <span className="text-2xl font-extrabold tracking-tight font-sans text-[#1F1916]">
+                e<span className="text-[#704F38]">.</span>shop
               </span>
             </Link>
             <p className="mt-3 text-xs text-slate-500 leading-relaxed max-w-sm">
@@ -209,12 +209,12 @@ export function Footer() {
             </h5>
             <ul className="mt-3 space-y-2 text-xs text-slate-600">
               <li>
-                <Link to="/" className="hover:text-slate-900">
-                  Customer Care
+                <Link to="/profile" className="hover:text-slate-900">
+                  My Profile & Account
                 </Link>
               </li>
               <li>
-                <Link to="/" className="hover:text-slate-900">
+                <Link to="/orders" className="hover:text-slate-900">
                   Shipping & Tracking
                 </Link>
               </li>

@@ -39,6 +39,7 @@ export interface CartContextType {
   isWishlisted: (productId: number) => boolean;
   orders: Order[];
   addOrder: (order: Order) => void;
+  cancelOrder: (orderId: string, reason?: string) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedCategory: string;
@@ -85,7 +86,7 @@ const INITIAL_SEED_ORDERS: Order[] = [
     paymentMethod: "cod",
     address: {
       fullName: "Priya Sharma",
-      phone: "9876543210",
+      phone: "9000000000",
       street: "Flat 402, Sunshine Residency, MG Road",
       city: "Bengaluru",
       state: "Karnataka",
@@ -112,7 +113,7 @@ const INITIAL_SEED_ORDERS: Order[] = [
     paymentMethod: "upi",
     address: {
       fullName: "Priya Sharma",
-      phone: "9876543210",
+      phone: "9000000000",
       street: "Flat 402, Sunshine Residency, MG Road",
       city: "Bengaluru",
       state: "Karnataka",
@@ -151,7 +152,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const saved = localStorage.getItem(ORDERS_LIST_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const updated = parsed.map((ord: Order) =>
+            ord.address?.phone === "9876543210"
+              ? { ...ord, address: { ...ord.address, phone: "9000000000" } }
+              : ord
+          );
+          return updated;
+        }
       }
       return INITIAL_SEED_ORDERS;
     } catch {
@@ -329,6 +337,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLastOrder(newOrder);
   };
 
+  const cancelOrder = (orderId: string, reason?: string) => {
+    setOrders((prev) =>
+      prev.map((ord) =>
+        ord.orderId === orderId
+          ? {
+              ...ord,
+              status: "Cancelled" as const,
+              estimatedDelivery: reason ? `Cancelled (${reason})` : "Cancelled by Customer",
+            }
+          : ord
+      )
+    );
+    showToast(`Order #${orderId} has been cancelled successfully`);
+  };
+
   const checkPincode = (code: string): boolean => {
     setPincode(code);
     if (!code || code.length < 6) {
@@ -378,6 +401,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isWishlisted,
         orders,
         addOrder,
+        cancelOrder,
         searchQuery,
         setSearchQuery,
         selectedCategory,
